@@ -1,5 +1,5 @@
 Older File Deleter - 
-- Latest version: OlderFileDeleter_v1.0 (2022-02-27)
+- Latest version: OlderFileDeleter_v1.1 (2024-01-30)
 - By Phoenix125 | http://www.Phoenix125.com | http://discord.gg/EU7pzPs | kim@kim125.com
 
 ----------
@@ -15,7 +15,7 @@ Older File Deleter -
 --------------------------------------------------
 [ --------------- OLDER FILE VERSION DELETER INFORMATION --------------- ]
 Author   :  Phoenix125
-Version  :  v1.0
+Version  :  v1.1
 Website  :  http://www.Phoenix125.com
 Discord  :  http://discord.gg/EU7pzPs
 Forum    :  https://phoenix125.createaforum.com/index.php
@@ -77,6 +77,9 @@ Forum:   https://phoenix125.createaforum.com/index.php
 -----------------
  VERSION HISTORY
 -----------------
+(2024-01-30) v1.1
+• Fixed an issue with age-related files. It was not correctly identifying files for deletion.
+
 (2021-02-27) v1.0 Initial Release
 • Deletes files in a folder older than set days and/or keep the defined most recent versions of files and deletes all older versions.
 • Can monitor multiple files in multiple folders.

@@ -1,16 +1,17 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=Resources\phoenixtray.ico
-#AutoIt3Wrapper_Outfile=Builds\OlderFileDeleter_v1.0.exe
+#AutoIt3Wrapper_Outfile=Builds\OlderFileDeleter_v1.1.exe
 #AutoIt3Wrapper_Compression=3
 #AutoIt3Wrapper_Res_Comment=By Phoenix125
 #AutoIt3Wrapper_Res_Description=Deletes older file versions by age or number of files.
-#AutoIt3Wrapper_Res_Fileversion=1.0
+#AutoIt3Wrapper_Res_Fileversion=1.1.0.0
 #AutoIt3Wrapper_Res_ProductName=Older File Deleter
-#AutoIt3Wrapper_Res_ProductVersion=1.0
+#AutoIt3Wrapper_Res_ProductVersion=1.1
 #AutoIt3Wrapper_Res_CompanyName=http://www.Phoenix125.com
 #AutoIt3Wrapper_Res_LegalCopyright=http://www.Phoenix125.com
 #AutoIt3Wrapper_Res_Language=1033
 #AutoIt3Wrapper_Res_Icon_Add=Resources\phoenixfaded.ico
+#AutoIt3Wrapper_Res_File_Add=Resources\readme.txt
 #AutoIt3Wrapper_Run_AU3Check=n
 #AutoIt3Wrapper_Run_Tidy=y
 #AutoIt3Wrapper_Run_Au3Stripper=y
@@ -24,11 +25,12 @@
 #include <TrayConstants.au3>
 
 Global $aUtilName = "OlderFileDeleter"
-Global $aUtilVersion = "v1.0" ; (2022-02-27)
+Global $aUtilVersion = "v1.1"
 Global $aUtilityVer = $aUtilName & " " & $aUtilVersion
-Global $aUtilVerNumber = 1
+Global $aUtilVerNumber = 2
 ; 0 = v0.0 2021-12-26
 ; 1 = v1.0 2022-02-27
+; 2 = v1.1 2024-01-30
 
 Global $aIniFile = @ScriptDir & "\" & $aUtilName & ".ini"
 Global $aIniFailFile = @ScriptDir & "\___INI_FAIL_VARIABLES___.txt"
@@ -97,6 +99,8 @@ Func _ScanAndDelete()
 	Next
 	_ArrayDelete($xFilesDeleteAge, 0)
 	_ArrayDelete($xFilesDeleteQnty, 0)
+;~ 	_ArrayDisplay($xFilesDeleteAge, "Delete by AGE") ;kim125er!
+;~ 	_ArrayDisplay($xFilesDeleteQnty, "Delete by QUANTITY") ;kim125er!
 	For $t = 0 To (UBound($xFilesDeleteAge) - 1)
 		If $aBackgroundOnlyYN = "no" Then ControlSetText($aSplash, "", "Static1", "Deleting by Age: " & ($t + 1) & "/" & UBound($xFilesDeleteAge) & @CRLF & $xFilesDeleteAge[$t])
 		LogWrite("[DEL AGE] Deleting " & ($t + 1) & " of " & (UBound($xFilesDeleteAge) - 2) & ":" & $xFilesDeleteAge[$t])
@@ -218,7 +222,6 @@ Func TrayOpenLatestLog()
 		Local $tDateAdd = _DateAdd('D', -1, _NowCalcDate())
 		$tDateAdd = StringReplace($tDateAdd, "/", "-")
 		$aLogFile = $aFolderLog & $aUtilName & "_Log_" & $tDateAdd & ".txt"
-;~ 		MsgBox(0, "Kim", $aLogFile & @CRLF & $tDateAdd) ;kim125er!
 	EndIf
 	ShellExecute($aLogFile)
 EndFunc   ;==>TrayOpenLatestLog
@@ -261,7 +264,9 @@ Func _GetFilesToDelete($tNo)
 	If IsArray($xFiles) Then
 		For $n = 1 To $xFiles[0]
 			Local $sFilename = _FileNameFromPath($xFiles[$n])
-			Local $sAge = _DateDiffInSeconds(StringReplace($tFolder & "\", "\\", "\") & $xFiles[$n])
+			Local $tFN = StringReplace($tFolder & "\", "\\", "\") & $xFiles[$n]
+			If StringLeft($tFN, 1) = "\" Then $tFN = "\" & $tFN
+			Local $sAge = _DateDiffInSeconds($tFN)
 			If _StringStartsWith($sFilename, $tFilename) Then
 				_ArrayAdd($xFileMatch, $tFolder & "?" & $sFilename & "?" & $sAge & "?" & UBound($xFileMatch))
 				_ArrayAdd($xFileAge, $sAge)
@@ -270,7 +275,6 @@ Func _GetFilesToDelete($tNo)
 		If $xFileMaxAgeDays[$tNo] > -1 Then ; Delete by age
 			For $n = 1 To (UBound($xFileAge) - 1)
 				Local $tSplit = StringSplit($xFileMatch[$n], "?")
-;~ 				If $tSplit[0] <> 4 Then MsgBox(0, "Kim", "ERROR") ;kim125er!
 				Local $tFldr = $tSplit[1]
 				Local $tFN = $tSplit[2]
 				Local $tAge = $tSplit[3]
